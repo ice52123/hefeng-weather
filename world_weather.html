@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+  <style>
+    table{
+      width: 100%;
+    }
+    th,td{
+      width: 16.66666666%;
+      text-align: center;
+      height: 36px;
+      line-height: 36px;
+    }
+  </style>
+</head>
+<body>
+<div class="test"></div>
+<div id="allmap"></div>
+<script src="http://api.map.baidu.com/api?v=2.0&ak=dh1DCqQx75ggr3wcmGCuMtTn4u2lW0Sr"></script>
+<script>
+  $(document).ready(function(){
+    var map = new BMap.Map("allmap");
+
+    function myFun(result){
+      var cityName = result.name;
+      map.setCenter(cityName);
+      console.log("当前定位城市:"+cityName);
+      $.ajax({
+        type:"get",
+        url:"http://api.worldweatheronline.com/premium/v1/weather.ashx?key=0e46006377be4f09ada45750180801&q="+cityName+"&num_of_days=0&tp=1&format=json",
+        success:function(result){
+          $(".test").append(
+              "<table>"+
+              "<thead>"+
+              "<tr>"+
+              "<th>图标</th>"+
+              "<th>区域</th>"+
+              "<th>天气情况</th>"+
+              "<th>温度</th>"+
+              "<th>日出时间</th>" +
+              "<th>日落时间</th>" +
+              "</tr>"+
+              "</thead>"+
+              "<tbody>"+
+              "<tr>"+
+              "<td>"+"<img src='"+result.data.current_condition[0].weatherIconUrl[0].value+"'>"+"</td>"+
+              "<td>"+result.data.request[0].query+"</td>"+
+              "<td>"+result.data.current_condition[0].weatherDesc[0].value+"</td>"+
+              "<td>"+result.data.weather[0].hourly[0].tempC+"℃"+"</td>"+
+              "<td>"+result.data.weather[0].astronomy[0].sunrise+"</td>"+
+              "<td>"+result.data.weather[0].astronomy[0].sunset+"</td>"+
+              "</tr>"+
+              "</tbody>"+
+              "</table>"
+          )
+        },
+        error:function(){
+          alert("错误!");
+        }
+      })
+    }
+    var myCity = new BMap.LocalCity();
+    myCity.get(myFun);
+  });
+
+</script>
+</body>
+</html>
